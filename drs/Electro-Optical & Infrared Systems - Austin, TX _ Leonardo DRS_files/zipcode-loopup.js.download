@@ -1,0 +1,58 @@
+
+    var button = document.getElementById("marlo_coil_search");
+    var zipInput = document.getElementById("marlo_coil_input_zip");
+    var resultWrappers = document.getElementsByClassName("m35-results-content-result_wrapper");
+    if(button){
+        button.onclick = function() {marloCoilSearch()};
+    }
+    if(zipInput){
+        zipInput.addEventListener("keyup", function (event) {
+            if (event.keyCode == 13) { marloCoilSearch(); }
+        })
+    }
+
+
+    function marloCoilSearch() {
+    var zip = zipInput.value;
+    //console.log(zip);
+    var xhttp = new XMLHttpRequest();
+    var apiUrl = window.location.protocol + "//" + window.location.hostname + "/wp-json/ziplookup/v1/zip/";
+    xhttp.open("GET", apiUrl + zip, true);
+    xhttp.onreadystatechange = function () {
+    if (this.readyState == 4 && this.status == 200) {
+    //console.log(this.responseText);
+    parseResults(this.responseText);
+    }
+}
+  xhttp.send();
+}
+    function parseResults(results) {
+    var resellers = JSON.parse(results);
+    console.log(resellers);
+    document.getElementsByClassName("m35-results")[0].style.visibility = "visible";
+    clearResultWrappers();
+    //populateResultWrapper(0, resellers);
+    for (var i = 0; i < resellers.length; i++) {
+        populateResultWrapper(i, resellers[i]);
+    }
+}
+    function populateResultWrapper(i, reseller) {
+    var resultWrapper = resultWrappers[i];
+    if (reseller.company) resultWrapper.getElementsByClassName("m35-results-content-result_name")[0].innerHTML = reseller.company;
+    if (reseller.street_address) resultWrapper.getElementsByClassName("m35-results-content-result_street")[0].innerHTML = reseller.street_address;
+    if (reseller.city) resultWrapper.getElementsByClassName("m35-results-content-result_city_state_zip")[0].innerHTML += reseller.city;
+    if (reseller.state) resultWrapper.getElementsByClassName("m35-results-content-result_city_state_zip")[0].innerHTML += ", " + reseller.state;
+    if (reseller.zip) resultWrapper.getElementsByClassName("m35-results-content-result_city_state_zip")[0].innerHTML += ", " + reseller.zip;
+    if (reseller.telephone) resultWrapper.getElementsByClassName("m35-results-content-result_tel")[0].innerHTML = "<a href='tel:" + reseller.telephone + "'>" + reseller.telephone + "</a>";
+    if (reseller.email) resultWrapper.getElementsByClassName("m35-results-content-result_email")[0].innerHTML = "<a href='mailto:" + reseller.email + "'>" + reseller.email + "</a>";
+    if (reseller.website) resultWrapper.getElementsByClassName("m35-results-content-result_website")[0].innerHTML = "<a href='http://" + reseller.website + "' target='_blank'>" + reseller.website + "</a>";
+    resultWrapper.style.visibility = "visible";
+}
+    function clearResultWrappers() {
+    for (var i = 0; i < resultWrappers.length; i++) {
+    var children = resultWrappers[i].children;
+    for (var j = 0; j < children.length; j++) {
+    children[j].innerHTML = "";
+}
+}
+}

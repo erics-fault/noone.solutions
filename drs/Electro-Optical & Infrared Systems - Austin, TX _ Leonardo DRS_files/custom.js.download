@@ -1,0 +1,925 @@
+;//Start Module: Lazy Load Images 
+(function($){
+    'use strict';
+
+    var lazyLoad = window.leonardo.lazyLoad || new Object;
+    
+    lazyLoad.loadMore = function(objects){
+        var lazyObjects = $(objects);
+        if (lazyObjects.length == 0) {
+            return;
+        }
+    	
+    	$(lazyObjects).each(function(tabIndex, lazyObject) {
+    	    var count = $(this).data("lazy-load");
+    		
+    		$(this).find('div.invisible').each(function(i, e){
+    			if (i > (count-1)) return false;
+                $(this).removeClass("invisible");
+            });
+
+            if ($(this).find('div.invisible').length <= 0) {
+                $(this).find("button.see-more").hide();
+            }
+    		
+    		switch (window.leonardo.util.getCurrentViewport()){
+            case 'DESKTOP':
+            	$(this).find('[data-lazy-img-url-d]').each(function(i, e){
+            		if (i > (count-1)) return false;
+            		var url = $(this).data('lazy-img-url-d');
+            		$(this).attr('data-img-url-d', url);
+            		$(this).removeAttr('data-lazy-img-url-d');
+                });
+        
+            	$(this).find('[data-lazy-src-url-d]').each(function(i, e){
+            		if (i > (count-1)) return false;
+            		var url = $(this).data('lazy-src-url-d');
+            		$(this).attr('data-src-url-d', url);
+            		$(this).removeAttr('data-lazy-src-url-d');
+                });
+                break;
+            case 'TABLET_LANDSCAPE':
+            	$(this).find('[data-lazy-img-url-tl]').each(function(i, e){
+            		if (i > (count-1)) return false;
+            		var url = $(this).data('lazy-img-url-tl');
+            		$(this).attr('data-img-url-tl', url);
+            		$(this).removeAttr('data-lazy-img-url-tl');
+                });
+        
+            	$(this).find('[data-lazy-src-url-tl]').each(function(i, e){
+            		if (i > (count-1)) return false;
+            		var url = $(this).data('lazy-src-url-tl');
+            		$(this).attr('data-src-url-tl', url);
+            		$(this).removeAttr('data-lazy-src-url-tl');
+                });
+                break;
+            case 'TABLET_PORTRAIT':
+            	$(this).find('[data-lazy-img-url-tp]').each(function(i, e){
+            		if (i > (count-1)) return false;
+            		var url = $(this).data('lazy-img-url-tp');
+            		$(this).attr('data-img-url-tp', url);
+            		$(this).removeAttr('data-lazy-img-url-tp');
+                });
+        
+            	$(this).find('[data-lazy-src-url-tp]').each(function(i, e){
+            		if (i > (count-1)) return false;
+            		var url = $(this).data('lazy-src-url-tp');
+            		$(this).attr('data-src-url-tp', url);
+            		$(this).removeAttr('data-lazy-src-url-tp');
+                });
+                break;
+            case 'MOBILE':
+            	$(this).find('[data-lazy-img-url-m]').each(function(i, e){
+            		if (i > (count-1)) return false;
+            		var url = $(this).data('lazy-img-url-m');
+            		$(this).attr('data-img-url-m', url);
+            		$(this).removeAttr('data-lazy-img-url-m');
+                });
+        
+            	$(this).find('[data-lazy-src-url-m]').each(function(i, e){
+            		if (i > (count-1)) return false;
+            		var url = $(this).data('lazy-src-url-m');
+            		$(this).attr('data-src-url-m', url);
+            		$(this).removeAttr('data-lazy-src-url-m');
+                });
+                break;
+    		}
+    	});
+    	
+    	$(window).trigger('scroll').trigger('resize');
+    }
+    
+    lazyLoad.init = function(){
+        var lazyObjects = $.find('*[data-lazy-load]');
+    	lazyLoad.loadMore(lazyObjects);
+    	$("button.see-more").on("click", function() {
+    	    var tab = $(this).parents("*[data-lazy-load]");
+    	    lazyLoad.loadMore(tab);
+    	});
+    }
+
+    window.leonardo.lazyLoad = lazyLoad;
+})(jQuery);
+
+;//Start Module: Lazy Load for iframe 
+(function($){
+    'use strict';
+
+    var lazyLoadIFrame = window.leonardo.lazyLoadIFrame || new Object;
+    
+    lazyLoadIFrame.init = function(){
+    	$("iframe[data-src]").attr("src", function (){ return $(this).attr("data-src"); })
+    }
+
+    window.leonardo.lazyLoadIFrame = lazyLoadIFrame;
+})(jQuery);
+
+;//Start Module: All products custom
+(function($){
+    'use strict';
+    
+    var allProducts = window.leonardo.allProducts || new Object;
+    var filterContainer = $(".filter-container.filter-container-all-products");
+    var allProductsContainer = $("#catalog-missions-all");
+    var ns = (typeof filterContainer === 'undefined') ? '' : filterContainer.attr("data-namespace");
+    var baseUrl = (typeof filterContainer === 'undefined') ? '' : filterContainer.attr("data-base-url");
+    
+    allProducts.init = function() {
+    
+    	filterContainer.find(".filter-container--subfilters--list--subfilter").off('click');
+    	filterContainer.on('click', '.filter-container--subfilters--list--subfilter', function(e) {
+            e.stopPropagation();
+            /*DVD*/return;
+            
+            var _this = $(this);
+            var filter = _this.attr("data-filter"); 
+            var subfilterslist = _this.parents(".filter-container--subfilters--list");
+            var id = subfilterslist.attr("data-id");
+            var reverse = subfilterslist.hasClass("reverse");
+            
+            if (reverse) {
+            	_this.toggleClass("active");
+                _this.toggleClass("notActive");
+
+                if (_this.parent().find(".filter-container--subfilters--list--subfilter.active").length == 0) {
+                    filterContainer.find(".filter-container--filters--filter[data-filter='"+id+"']").removeClass("subFilterActive");
+                } else {
+                    filterContainer.find(".filter-container--filters--filter[data-filter='"+id+"']").addClass("subFilterActive");
+                }
+            } else {
+                if ("*" === filter) {
+                    subfilterslist.find(".filter-container--subfilters--list--subfilter.active").removeClass("active");
+                } else {
+                    subfilterslist.find(".filter-container--subfilters--list--subfilter[data-filter='*']").removeClass("active");
+                }
+                _this.toggleClass("active");
+                var n = subfilterslist.find(".filter-container--subfilters--list--subfilter").length;
+                var c = subfilterslist.find(".filter-container--subfilters--list--subfilter.active").length;
+                if (n == c+1) {
+                    subfilterslist.find(".filter-container--subfilters--list--subfilter").removeClass("active");
+                    subfilterslist.find(".filter-container--subfilters--list--subfilter[data-filter='*']").addClass("active");
+                }
+
+                var all = subfilterslist.find(".filter-container--subfilters--list--subfilter.active[data-filter='*']").length;
+                if (all >= 1) {
+                    filterContainer.find(".filter-container--filters--filter[data-filter='"+id+"']").removeClass("subFilterActive");
+                } else {
+                    filterContainer.find(".filter-container--filters--filter[data-filter='"+id+"']").addClass("subFilterActive");    
+                }
+            }
+            allProducts.filter();
+        });
+
+        filterContainer.on('click', '.filter-container--filters--filter.reset', function(e) {
+            e.stopPropagation();
+            /*DVD*/return;
+            
+            var _this = $(this);
+            filterContainer.find(".filter-container--subfilters--list--subfilter").removeClass("active");
+            filterContainer.find(".filter-container--subfilters--list.reverse .filter-container--subfilters--list--subfilter").addClass("notActive");
+            filterContainer.find(".filter-container--subfilters--list--subfilter[data-filter='*']").addClass("active");
+            filterContainer.find(".filter-container--filters--filter").removeClass("subFilterActive");
+
+            allProducts.filter();
+        });
+        
+        allProductsContainer.on('click', '.load-more', function(e) {
+        	var btn = $(this);
+        	var ajaxUrl = btn.attr("data-load-url");
+        	$.get(ajaxUrl, function(data){
+        		var $data = $(data);
+        		var list = $data.find("#catalog-missions-all .all-products--product-list");
+        		history.replaceState(null, null, list.attr("data-current-url"));
+        		var ajaxBtn = $data.find("#catalog-missions-all .load-more");
+        		if (ajaxBtn.length == 0){
+        			btn.hide();
+        		} else {
+        			btn.attr("data-load-url", ajaxBtn.attr("data-load-url"));
+        		}
+        		var contents = list.contents();
+        		if (list.find(".journal-content-article").length == 0) { 
+        			btn.hide();
+        		}
+        		var tabPane = btn.parents(".tab-pane").find(".all-products--product-list");
+        		tabPane.append(contents);
+        		window.leonardo.lazyLoad.loadMore(tabPane);
+        	});
+        });
+        
+        allProducts.loadPreviousPages();
+    }
+
+    allProducts.filter = function () {
+        var url = baseUrl;
+        var and = [], or = [];
+
+        filterContainer.find(".filter-container--subfilters--list--subfilter.active").each(function(i,e) {
+            var _this = $(e);
+            var filter = _this.parents(".filter-container--subfilters--list"); 
+            var filterValue = encodeURIComponent(_this.attr("data-filter"));
+            var id = filter.attr("data-id");
+            var reverse = filter.hasClass("reverse");
+            
+            if ("*" === filterValue) return true;
+            
+            if (reverse) {
+            	or.push(filterValue);
+            } else {
+            	and.push(filterValue);
+            } 
+        });
+
+        if (and.length > 0) url = Liferay.Util.addParams(ns+"and="+and.join(','), url);
+        if (or.length > 0) url = Liferay.Util.addParams(ns+"or="+or.join(','), url);
+        
+        url += " #catalog-missions-all";
+        
+        window.leonardo.util.loading(allProductsContainer);
+        allProductsContainer.load(url, function(){
+        	var list = allProductsContainer.find("#catalog-missions-all .all-products--product-list");
+    		history.replaceState(null, null, list.attr("data-current-url"));
+    		
+            window.leonardo.lazyLoad.loadMore($("#catalog-missions-all"));
+            allProductsContainer.find("button.see-more").on("click", function() {
+        	    var tab = $(this).parents("*[data-lazy-load]");
+        	    window.leonardo.lazyLoad.loadMore(tab);
+        	});
+        });
+        
+    }
+    
+    allProducts.loadPreviousPages = function () {
+        $(".previous-page").each(function(i,e) {
+            var pageContainer = $(this);
+            var ajaxUrl = pageContainer.attr("data-load-url");
+            $.get(ajaxUrl, function(data){
+                var $data = $(data);
+                var list = $data.find("#catalog-missions-all .all-products--product-list");
+                pageContainer.html(list.contents());
+                window.leonardo.lazyLoad.loadMore(pageContainer);
+                pageContainer.replaceWith(pageContainer.html());
+            });
+        });
+    }
+
+    window.leonardo.allProducts = allProducts;
+})(jQuery);
+
+;//Start Module: Media Gallery custom
+(function($){
+    'use strict';
+    
+    var mediaGallery = window.leonardo.mediaGallery || new Object;
+    var filterContainer = $(".filter-container-multimedia"); 
+    var mediaGalleryContainer = $(".multimedia");
+    var ns = (typeof filterContainer === 'undefined') ? '' : filterContainer.attr("data-namespace");
+    var baseUrl = (typeof filterContainer === 'undefined') ? '' : filterContainer.attr("data-base-url");
+    
+    mediaGallery.init = function() {
+    	
+    	$(".filter-container-multimedia--filters--filter.dropdown").off('click');
+    	$('.filter-container-multimedia--filters--filter.dropdown').on("click",function(e){
+            e.preventDefault();
+            /*DVD*/return;
+            
+            var id = $(this).attr('data-filter');
+            var container = $(this).parents(".filter-container-multimedia"); 
+            var _target= container.find(".filter-container-multimedia--subfilters--list[data-id='"+id+"']");
+            
+            $(this).siblings().removeClass('active');
+            $(this).toggleClass('active');
+
+            if($(this).attr('data-filter')!="All"){
+                _target.siblings().removeClass('active');
+                _target.toggleClass('active');
+            }else{
+            	container.find('.filter-container-multimedia--subfilters--list').toggleClass('active');
+            }
+        });
+
+    	
+    	$(".filter-container-multimedia--subfilters--list--subfilter").off('click');
+    	filterContainer.on('click', '.filter-container-multimedia--subfilters--list--subfilter', function(e) {
+            e.stopPropagation();
+            /*DVD*/return;
+            
+            var _this = $(this);
+            var subfilterslist = _this.parents(".filter-container-multimedia--subfilters--list");
+            var id = subfilterslist.attr("data-id");
+            
+            if (id === "Category") {
+                _this.toggleClass("active");
+                _this.toggleClass("notActive");
+
+                if (_this.parent().find(".filter-container-multimedia--subfilters--list--subfilter.active").length == 0) {
+                    filterContainer.find(".filter-container-multimedia--filters--filter[data-filter='"+id+"']").removeClass("subFilterActive");
+                } else {
+                    filterContainer.find(".filter-container-multimedia--filters--filter[data-filter='"+id+"']").addClass("subFilterActive");
+                }
+            } else {
+            	subfilterslist.find(".filter-container-multimedia--subfilters--list--subfilter.active").removeClass("active");
+                _this.toggleClass("active");
+
+                var all = subfilterslist.find(".filter-container-multimedia--subfilters--list--subfilter.active[data-filter='*']").length;
+                if (all >= 1) {
+                    filterContainer.find(".filter-container-multimedia--filters--filter[data-filter='"+id+"']").removeClass("subFilterActive");
+                } else {
+                    filterContainer.find(".filter-container-multimedia--filters--filter[data-filter='"+id+"']").addClass("subFilterActive");    
+                }
+            }
+            mediaGallery.filter();
+    	});
+
+        filterContainer.on('click', '.filter-container-multimedia--filters--filter.reset', function(e) {
+            e.stopPropagation();
+            /*DVD*/return;
+            
+            var _this = $(this);
+            filterContainer.find(".filter-container-multimedia--subfilters--list--subfilter").removeClass("active");
+            filterContainer.find(".filter-container-multimedia--subfilters--list[data-id='Category'] .filter-container-multimedia--subfilters--list--subfilter").addClass("notActive");
+            filterContainer.find(".filter-container-multimedia--subfilters--list--subfilter[data-filter='*']").addClass("active");
+            filterContainer.find(".filter-container-multimedia--filters--filter").removeClass("subFilterActive");
+
+            mediaGallery.filter();
+        });
+        
+        mediaGalleryContainer.on('click', '.multimedia--action-items--see-more', function(e) {
+        	var btn = $(this);
+        	var url = btn.attr("data-load-url");
+        	$.get(url, function(data){
+        		var $data = $(data);
+        		var ajaxBtn = $data.find(".multimedia--action-items--see-more");
+        		if (ajaxBtn.length == 0){
+        			btn.hide();
+        		} else {
+        			btn.attr("data-load-url", ajaxBtn.attr("data-load-url"));
+        		}
+        		var list = $data.find(".multimedia .multimedia--item-list");
+        		var contents = list.contents();
+        		if (list.find(".journal-content-article").length == 0) { 
+        			btn.hide();
+        		}
+        		var itemList = mediaGalleryContainer.find(".multimedia--item-list");
+        		itemList.append(contents);
+        		itemList.isotope('appended', contents);
+        		window.setTimeout(function(){
+        			itemList.isotope('layout');	
+                }, 100); 
+        		window.leonardo.lazyLoad.loadMore($(".multimedia"));
+        	});
+        });
+    
+    }
+
+    mediaGallery.filter = function () {
+        var url = baseUrl;
+        var type = [], category= [];
+
+        filterContainer.find(".filter-container-multimedia--subfilters--list--subfilter.active").each(function(i,e) {
+            var _this = $(e);
+            var filter = _this.parents(".filter-container-multimedia--subfilters--list"); 
+            var filterValue = encodeURIComponent(_this.attr("data-filter"));
+            var id = filter.attr("data-id");
+            
+            if ("*" === filterValue) return true;
+            
+            if (id === "Type") {
+                type.push(filterValue);
+            } else if (id === "Category") {
+            	category.push(filterValue);
+            }   
+        });
+
+        if (type.length > 0) url = Liferay.Util.addParams(ns+"type="+type.join(','), url);
+        if (category.length > 0) url = Liferay.Util.addParams(ns+"category="+category.join(','), url);
+        
+        url += " .multimedia";
+        
+        window.leonardo.util.loading(mediaGalleryContainer);
+        mediaGalleryContainer.load(url, function(){
+            window.leonardo.lazyLoad.loadMore($(".multimedia"));
+            window.leonardo.masonryGrid.multimedia($('.multimedia .grid-isotope'));
+        });
+        
+    }
+
+    window.leonardo.mediaGallery = mediaGallery;
+})(jQuery);
+
+;//Start Module: Search result custom
+(function($){
+    'use strict';
+    
+    var searchResults = window.leonardo.searchResults || new Object;
+
+    var searchResultsContent = $(".search-results--content");
+    
+    searchResults.initExt = function() {
+    	var selector = ".filter-container--subfilters--list--subfilter:not(.filter-widget--datepicker)";
+        searchResultsContent.find(selector).off('click');
+        searchResultsContent.on("click", selector, function(e){
+        	e.stopPropagation();
+
+            var _this = $(this);
+            var filter = _this.attr("data-filter"); 
+            var isDatePicker = _this.hasClass(".filter-widget--datepicker");
+            var filterContainer = _this.parents(".filter-container");
+            var subfilterslist = _this.parents(".filter-container--subfilters--list");
+            var id = subfilterslist.attr("data-id");
+            var allExists = subfilterslist.find(".filter-container--subfilters--list--subfilter[data-filter='*']").length > 0;
+            var reverse = subfilterslist.hasClass("reverse");
+            
+            if (reverse) {
+            	_this.toggleClass("active");
+                _this.toggleClass("notActive");
+
+                if (_this.parent().find(".filter-container--subfilters--list--subfilter.active").length == 0) {
+                    filterContainer.find(".filter-container--filters--filter[data-filter='"+id+"']").removeClass("subFilterActive");
+                } else {
+                    filterContainer.find(".filter-container--filters--filter[data-filter='"+id+"']").addClass("subFilterActive");
+                }
+            } else {
+                if ("*" === filter) {
+                    subfilterslist.find(".filter-container--subfilters--list--subfilter.active").removeClass("active");
+                } else {
+                    subfilterslist.find(".filter-container--subfilters--list--subfilter[data-filter='*']").removeClass("active");
+                }
+                if (id === "Year") {
+                    var isActive = _this.hasClass("active");
+                    subfilterslist.find(".filter-container--subfilters--list--subfilter").removeClass("active");
+                    if (!isActive) _this.addClass("active");
+                    subfilterslist.find(".datepicker.filter-widget--datepicker._from .filter-container--subfilters--list--subfilter--text").text(Liferay.Language.get("from"));
+                    subfilterslist.find(".datepicker.filter-widget--datepicker._to .filter-container--subfilters--list--subfilter--text").text(Liferay.Language.get("to"));
+                    subfilterslist.find(".datepicker.filter-widget--datepicker._from").removeAttr("data-filter-date");
+                    subfilterslist.find(".datepicker.filter-widget--datepicker._to").removeAttr("data-filter-date");
+                } else {
+                    _this.toggleClass("active");
+                }
+                var n = subfilterslist.find(".filter-container--subfilters--list--subfilter").length;
+                var c = subfilterslist.find(".filter-container--subfilters--list--subfilter.active").length;
+
+                if (allExists && (n == c+1 || c == 0)) {
+                    subfilterslist.find(".filter-container--subfilters--list--subfilter").removeClass("active");
+                    subfilterslist.find(".filter-container--subfilters--list--subfilter[data-filter='*']").addClass("active");
+                }/* else if (!allExists && n == c) {
+                	subfilterslist.find(".filter-container--subfilters--list--subfilter").removeClass("active");
+                }*/
+
+                if (allExists) {
+                    var allActive = subfilterslist.find(".filter-container--subfilters--list--subfilter.active[data-filter='*']").length > 0;
+                    if (allActive) {
+                        filterContainer.find(".filter-container--filters--filter[data-filter='"+id+"']").removeClass("subFilterActive");
+                    } else {
+                        filterContainer.find(".filter-container--filters--filter[data-filter='"+id+"']").addClass("subFilterActive");    
+                    }
+                } else {
+                    if (c > 0) {
+                        filterContainer.find(".filter-container--filters--filter[data-filter='"+id+"']").addClass("subFilterActive");
+                    } else {
+                        filterContainer.find(".filter-container--filters--filter[data-filter='"+id+"']").removeClass("subFilterActive");    
+                    }
+                }
+            }
+
+            searchResults.filter(filterContainer);
+        });
+        
+        $(".search-results--content").on("click",".filter-container--filters--filter.reset", function(e) {
+        	e.stopPropagation();
+                    
+            var _this = $(this);
+            var filterContainer = _this.parents(".filter-container");
+            filterContainer.find(".filter-container--subfilters--list--subfilter").removeClass("active");
+            filterContainer.find(".filter-container--subfilters--list.reverse .filter-container--subfilters--list--subfilter").addClass("notActive");
+            filterContainer.find(".filter-container--subfilters--list--subfilter[data-filter='*']").addClass("active");
+            filterContainer.find(".filter-container--filters--filter").removeClass("subFilterActive");
+
+            searchResults.filter(filterContainer);
+        })
+
+        searchResultsContent.on("click", ".datepicker.filter-widget--datepicker", function(e){
+            $(this).datepicker();
+        });
+
+        searchResultsContent.on("pick.datepicker", ".datepicker.filter-widget--datepicker", function(e){
+            var _this = $(this);
+            var time = e.date.getTime();           
+            var filterContainer = _this.parents(".filter-container");
+            var subfilterslist = _this.parents(".filter-container--subfilters--list");
+            var id = subfilterslist.attr("data-id");
+
+            subfilterslist.find(".filter-container--subfilters--list--subfilter:not(.filter-widget--datepicker)").removeClass("active");
+            _this.addClass("active");
+            filterContainer.find(".filter-container--filters--filter[data-filter='"+id+"']").addClass("subFilterActive")
+	        
+	        var currentTime = _this.attr("data-filter-date");
+	        var isSmthChanged = (time != currentTime);
+			
+			if(!isSmthChanged) {
+				return;
+			}
+			
+			 _this.attr("data-filter-date", time);
+	        
+	        searchResults.filter(filterContainer);
+        });
+
+        searchResultsContent.on("click", ".search-results--content--group--results .load-more:not(.disabled)", function(){
+            var _self = $(this);
+            var url = _self.attr("data-load-url");
+            var dataTarget = $(_self.attr("data-target"));
+            var dataList = _self.attr("data-list");
+            _self.addClass("disabled");
+            $.get(url, function(data){
+            	_self.removeClass("disabled");
+                var $data = $(data);
+                var ajaxBtn = $data.find(".load-more");
+                if (ajaxBtn.length > 0) {
+                	_self.attr("data-load-url", ajaxBtn.attr("data-load-url"));	
+                } else {
+                	_self.addClass("hide");
+                }
+                var list = $data.find(dataList);
+                dataTarget.find(dataList).append(list.contents());
+                window.leonardo.lazyLoad.loadMore(dataTarget);
+                if (dataTarget.find(dataList).hasClass(".grid-isotope")) window.leonardo.masonryGrid.multimedia(dataTarget.find(dataList));
+            });
+        });
+
+        searchResultsContent.on("click", ".leo-pagination a.leo-pagination--item--link", function(e){
+            e.preventDefault();
+            var _self = $(this);
+            var container = _self.parents(".leo-pagination");
+            var dataTarget = $(container.attr("data-target")).find(".search-results--content--group--results");
+            var href = _self.attr("href");
+            window.leonardo.util.loading(dataTarget);
+            $.get(href, function(data){
+                dataTarget.html($(data).find(".search-results--content--group--results").html());
+                window.leonardo.lazyLoad.init(dataTarget);
+                $('html, body').animate({
+                    scrollTop: $(".search-results--filter--filters").offset().top
+                }, 1000);
+            });
+        });
+        
+        window.leonardo.masonryGrid.multimedia($("#search-results--multimedia").find(".grid-isotope"));
+    }
+    
+    searchResults.filter = function (filterContainer) {
+        var url = filterContainer.attr("data-filter-url");
+        var ns = window.leonardo.util.getPortletNamespace(url);
+        var contentGroup = filterContainer.parents(".search-results--content--group");
+        var contentGroupResult = contentGroup.find(".search-results--content--group--results");
+        var contentGroupAction = contentGroup.find(".search-results--content--group--action");
+        var contentGroupId = contentGroup.attr("id");
+        var assetCategoryIds = [], dateFrom = "", dateTo = "", multimediaType = "";
+
+        filterContainer.find(".filter-container--subfilters--list--subfilter.active").each(function(i,e) {
+            var _this = $(e);
+            var filter = _this.parents(".filter-container--subfilters--list"); 
+            var filterValue = encodeURIComponent(_this.attr("data-filter") || "*");
+            var id = filter.attr("data-id");
+            
+            if (filterValue === "*") return true;
+            
+            if (contentGroupId === "search-results--multimedia" && id === "Type") {
+            	multimediaType = filterValue;
+            } else if (id === "Year") {
+                dateFrom = new Date(filterValue,0,1);
+                dateTo = new Date(filterValue,11,31,23,59,59);
+            } else {
+                assetCategoryIds.push(filterValue);
+            }
+            
+        });
+
+        filterContainer.find(".filter-container--subfilters--list--subfilter.datepicker.filter-widget--datepicker[data-filter-date]").each(function(i,e) {
+            var _this = $(e);
+            var filter = _this.parents(".filter-container--subfilters--list"); 
+            var filterValue = encodeURIComponent(_this.attr("data-filter-date") || 0);
+            
+            if (_this.hasClass("_from")){
+                dateFrom = new Date(parseInt(filterValue));
+            } else if (_this.hasClass("_to")){
+                var to = parseInt(filterValue);
+                var off = (23*3600 + 59*60 + 59)*1000;
+                dateTo = new Date(to+off);
+            }
+        });
+
+        if (assetCategoryIds.length > 0) url = Liferay.Util.addParams(ns+"assetCategoryIds="+assetCategoryIds.join(','), url);
+        if (dateFrom.constructor.name === 'Date') url = Liferay.Util.addParams(ns+"dateFrom="+dateFrom.getTime(), url);
+        if (dateTo.constructor.name === 'Date') url = Liferay.Util.addParams(ns+"dateTo="+dateTo.getTime(), url);
+        if (multimediaType.length > 0) url = Liferay.Util.addParams(ns+"multimediaType="+multimediaType, url);
+
+        window.leonardo.util.loading(contentGroupResult);
+        contentGroupAction.html("");
+        $.get(url, function(data){
+            var div = $("<div />").html($(data).html());
+            contentGroupResult.html(div.find(".search-results--content--group--results").html());
+            contentGroupAction.html(div.find(".search-results--content--group--action").html());
+
+            window.leonardo.lazyLoad.loadMore(contentGroup);
+            if (contentGroup.find(".grid-isotope").length > 0) window.leonardo.masonryGrid.multimedia(contentGroup.find(".grid-isotope"));
+        });
+    }
+
+    window.leonardo.searchResults = searchResults;
+})(jQuery);
+
+;//Start Module: Search cluster
+(function($){
+    'use strict';
+    
+    var searchCluster = window.leonardo.searchCluster || new Object;
+
+    var searchClusterInput = $("input.search-widget-local--content--search-text[data-cluster-id]");
+    var searchClusterAnchor = $("a.search-widget-local--content--search-icon[data-cluster-id]");
+    
+    searchCluster.init = function() {
+    	
+    	searchClusterInput.on("keydown", function(e){
+    		if (e.keyCode == 13) {
+    			var clusterType = $(this).attr("data-cluster-id");
+    			searchCluster.search(clusterType, $(this).val());
+    		}
+    	});
+
+    	searchClusterAnchor.on("click", function(e) {
+    		e.preventDefault();
+    		var clusterType = $(this).attr("data-cluster-id");
+    		var input = $(this).prev("input.search-widget-local--content--search-text[data-cluster-id]");
+    		searchCluster.search(clusterType, input.val());
+    	});
+    }
+    
+    searchCluster.search = function(clusterType, keywords) {
+    	var form = $("#portlet_com_liferay_portal_search_web_portlet_SearchPortlet form");
+    	form.find("input[name=_com_liferay_portal_search_web_portlet_SearchPortlet_clusterType]").val(clusterType);
+    	form.find("input[name=_com_liferay_portal_search_web_portlet_SearchPortlet_keywords]").val(keywords);
+    	submitForm(form[0]);
+    }
+    
+    window.leonardo.searchCluster = searchCluster;
+})(jQuery);
+
+;//Start Module: ICS
+(function($){
+    'use strict';
+	
+	if (navigator.userAgent.indexOf('MSIE') > -1 && navigator.userAgent.indexOf('MSIE 10') == -1) {
+		console.log('Unsupported Browser');
+		return;
+	}
+
+	var SEPARATOR = (navigator.appVersion.indexOf('Win') !== -1) ? '\r\n' : '\n';
+	var calendarEvents = [];
+	var calendarStart = [
+		'BEGIN:VCALENDAR',
+		'VERSION:2.0'
+	].join(SEPARATOR);
+	var calendarEnd = SEPARATOR + 'END:VCALENDAR';
+    
+    var ics = window.leonardo.ics || new Object;
+	
+    ics.init = function() {
+    	$("a.ics").on("click", function() {
+    		var $this = $(this);
+    		var title = $this.attr("data-title");
+    		var description = $this.attr("data-description");
+    		var place = $this.attr("data-place");
+    		var begin = $this.attr("data-begin");
+    		var end = $this.attr("data-end");
+    		
+    		ics.clearAllEvents();
+    		ics.addEvent(title, description, place, begin, end);
+    		ics.download('LeonardoEvent');
+    	});
+    }
+	
+	/**
+	 * Returns events array
+	 * @return {array} Events
+	 */
+	ics.events = function() {
+		return calendarEvents;
+	}
+	
+	/**
+	 * Returns calendar
+	 * @return {string} Calendar in iCalendar format
+	 */
+	ics.calendar = function() {
+		return calendarStart + SEPARATOR + calendarEvents.join(SEPARATOR) + calendarEnd;
+	}
+	
+	ics.clearAllEvents = function() {
+		calendarEvents.splice(0,calendarEvents.length);
+	}
+	
+	/**
+	 * Add event to the calendar
+	 * @param  {string} subject     Subject/Title of event
+	 * @param  {string} description Description of event
+	 * @param  {string} location    Location of event
+	 * @param  {string} begin       Beginning date of event
+	 * @param  {string} stop        Ending date of event
+	 */
+	ics.addEvent = function(subject, description, location, begin, stop) {
+		// I'm not in the mood to make these optional... So they are all required
+		if (typeof subject === 'undefined' ||
+			typeof description === 'undefined' ||
+			typeof location === 'undefined' ||
+			typeof begin === 'undefined' ||
+			typeof stop === 'undefined'
+		) {
+			return false;
+		}
+		
+		var isValidDate = function(d) {
+			return d instanceof Date && !isNaN(d);
+		}
+
+		//TODO add time and time zone? use moment to format?
+		var start_date = new Date(begin);
+		var end_date = new Date(stop);
+
+		if (isValidDate(start_date)) {
+			var start_year = ("0000" + (start_date.getFullYear().toString())).slice(-4);
+			var start_month = ("00" + ((start_date.getMonth() + 1).toString())).slice(-2);
+			var start_day = ("00" + ((start_date.getDate()).toString())).slice(-2);
+			var start_hours = ("00" + (start_date.getHours().toString())).slice(-2);
+			var start_minutes = ("00" + (start_date.getMinutes().toString())).slice(-2);
+			var start_seconds = ("00" + (start_date.getMinutes().toString())).slice(-2);
+		} else {
+			var start_year = "0000";
+			var start_month = "00";
+			var start_day = "00";
+			var start_hours = "00";
+			var start_minutes = "00";
+			var start_seconds = "00";
+		}
+
+		if (isValidDate(end_date)) {
+			var end_year = ("0000" + (end_date.getFullYear().toString())).slice(-4);
+			var end_month = ("00" + ((end_date.getMonth() + 1).toString())).slice(-2);
+			var end_day = ("00" + ((end_date.getDate()).toString())).slice(-2);
+			var end_hours = ("00" + (end_date.getHours().toString())).slice(-2);
+			var end_minutes = ("00" + (end_date.getMinutes().toString())).slice(-2);
+			var end_seconds = ("00" + (end_date.getMinutes().toString())).slice(-2);
+		} else {
+			var end_year = "0000";
+			var end_month = "00";
+			var end_day = "00";
+			var end_hours = "00";
+			var end_minutes = "00";
+			var end_seconds = "00";
+		}
+		
+		// Since some calendars don't add 0 second events, we need to remove time if there is none...
+		var start_time = '';
+		var end_time = '';
+		if (start_minutes + start_seconds + end_minutes + end_seconds !== 0) {
+			start_time = 'T' + start_hours + start_minutes + start_seconds;
+			end_time = 'T' + end_hours + end_minutes + end_seconds;
+		}
+
+		var start = isValidDate(start_date) ? (start_year + start_month + start_day + start_time) : null;
+		var end = isValidDate(end_date) ? (end_year + end_month + end_day + end_time) : null;
+
+		var calendarEvent = [];
+				
+		calendarEvent.push('BEGIN:VEVENT');
+		calendarEvent.push('CLASS:PUBLIC');
+		calendarEvent.push('DESCRIPTION:' + description);
+		if (start != null) calendarEvent.push('DTSTART;VALUE=DATE:' + start);
+		if (end != null) calendarEvent.push('DTEND;VALUE=DATE:' + end);
+		calendarEvent.push('LOCATION:' + location);
+		calendarEvent.push('SUMMARY;LANGUAGE=en-us:' + subject);
+		calendarEvent.push('TRANSP:TRANSPARENT');
+		calendarEvent.push('END:VEVENT');
+		
+		calendarEvent = calendarEvent.join(SEPARATOR);
+
+		calendarEvents.push(calendarEvent);
+		return calendarEvent;
+	}
+	
+	/**
+	 * Download calendar using the saveAs function from filesave.js
+	 * @param  {string} filename Filename
+	 * @param  {string} ext      Extention
+	 */
+	ics.download = function(filename, ext) {
+		if (calendarEvents.length < 1) {
+			return false;
+		}
+
+		ext = (typeof ext !== 'undefined') ? ext : '.ics';
+		filename = (typeof filename !== 'undefined') ? filename : 'calendar';
+		var calendar = calendarStart + SEPARATOR + calendarEvents.join(SEPARATOR) + calendarEnd;
+		window.open( "data:text/calendar;charset=utf8," + escape(calendar));
+	}
+    
+	window.leonardo.ics = ics;
+})(jQuery);
+
+;//End Module: ICS
+
+//table
+(function($){
+    'use strict';
+    
+    var table = window.leonardo.table || new Object;
+    
+    table.init = function() {
+    $(".trade-laws-followed--heading--row").each(function(i,e){
+    		var row = $(e);
+    		var text = [];
+    		row.find(".trade-laws-followed--heading--row--cell.m-hidden").each(function(i,e) {
+                var cell = $(e);
+                text.push(cell.text());
+    		});
+    		row.append("<div class=\"trade-laws-followed--heading--row--cell m-only\">"+ text.join("/") +"</div>");
+		})
+    }
+   
+	window.leonardo.table = table;
+})(jQuery);
+
+//accordion
+(function($){
+    'use strict';
+    
+    var accordion = window.leonardo.accordion || new Object;
+    
+    accordion.init = function() {
+    	$(".leo-accordion").each(function(){
+    		
+    		//close all rows
+			$(this).find("div.leo-accordion--row div.leo-accordion--title").addClass("collapsed").attr("aria-expanded","false")
+			$(this).find("div.leo-accordion--row div.leo-accordion--content").removeClass("in").attr("aria-expanded","false").attr("style","height: 0px;")
+			
+			//open only first row
+			var firstRowTitle = $(this).find("div.leo-accordion--row div.leo-accordion--title")
+			if(typeof(firstRowTitle) != "undefined" && firstRowTitle != null && firstRowTitle.length > 0){
+				$(firstRowTitle[0]).removeClass("collapsed").attr("aria-expanded","true");
+			}
+			var firstRowContent = $(this).find("div.leo-accordion--row div.leo-accordion--content");
+			if(typeof(firstRowContent) != "undefined" && firstRowContent != null && firstRowContent.length > 0){
+				$(firstRowContent[0]).addClass("in").attr("aria-expanded","true").attr("style","");
+			}
+		})
+    	
+    }
+   
+	window.leonardo.accordion = accordion;
+})(jQuery);
+
+(function($){
+    'use strict';
+    
+    var util = window.leonardo.util || new Object;
+    
+    util.getPortletId = function(url) {
+    	var s = url.indexOf("p_p_id=");
+    	var e = url.indexOf("&", (s+1));
+    	if (s > -1 && e > -1) {
+    		return url.substring(s+7,e);
+    	}
+    }
+    
+    util.getPortletNamespace = function(url) {
+    	return Liferay.Util.getPortletNamespace(util.getPortletId(url));
+    }
+    
+    util.loading = function(container){
+    	container.html("<div class=\"lds-roller\"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>");
+    }
+	
+	window.leonardo.util = util;
+})(jQuery);
+
+(function ($, root, undefined) {
+
+    $(function () {
+//$(window.leonardo).ready(function(){
+/* $(document).off('.data-api'); $(document).on('.leonardocompany .data-api'); */
+    
+    window.leonardo.lazyLoad.init();
+    window.leonardo.lazyLoadIFrame.init();
+    window.leonardo.allProducts.init();
+    window.leonardo.mediaGallery.init();
+    window.leonardo.ics.init();
+    window.leonardo.accordion.init();
+    window.leonardo.table.init();
+    window.leonardo.searchResults.initExt();
+    window.leonardo.searchCluster.init();
+    
+    /* Login*/
+    if ($(document).find("section#portlet_com_liferay_login_web_portlet_LoginPortlet").length > 0) {
+    	$("header.header").addClass("header--opaque")
+    }
+    }); /* end of function */
+
+})(jQuery, this);

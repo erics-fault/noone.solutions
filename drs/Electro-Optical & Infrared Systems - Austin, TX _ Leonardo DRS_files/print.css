@@ -1,0 +1,98 @@
+@media print and (color) {
+  .leonardocompany * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    background-color: red !important; }
+  .leonardocompany a:after {
+    content: ''; }
+  .leonardocompany a[href]:after {
+    content: none !important; }
+  .leonardocompany figure {
+    -webkit-column-break-inside: avoid;
+    page-break-inside: avoid;
+    break-inside: avoid; }
+  .leonardocompany .quick-menu {
+    display: none !important; }
+  .leonardocompany .header {
+    color: black !important;
+    position: relative !important;
+    top: auto !important;
+    transition: none !important; }
+  .leonardocompany .header--wrap {
+    padding: 0 50px !important; }
+  .leonardocompany .header--nav {
+    display: none !important;
+    color: black !important; }
+  .leonardocompany .header--nav--item {
+    display: inline-block !important;
+    position: relative !important;
+    padding: 10px !important;
+    vertical-align: middle !important; }
+  .leonardocompany .header--logo--link {
+    background: none !important;
+    display: none !important; }
+  .leonardocompany .header--logo--print-only {
+    display: block !important;
+    width: 150px !important;
+    height: 24px !important; }
+  .leonardocompany .header.sticky--link {
+    width: 256px !important;
+    height: 56px !important;
+    background-image: url("${site_logo_print!}") !important; }
+  .leonardocompany .leo-video {
+    display: none; }
+  .leonardocompany .footer .footer-row--links {
+    display: none !important; }
+  .leonardocompany .footer .footer-row--legal-and-social--legal--logo {
+    display: inline-block !important;
+    margin-bottom: 16px !important;
+    height: 34px !important;
+    width: 36px !important;
+    background-image: url(../images/logo-without-text.png) !important;
+    background-repeat: no-repeat !important;
+    background-size: contain !important;
+    background-position: center left !important;
+    margin-right: 20px !important; }
+  .leonardocompany .footer .footer-row--legal-and-social--legal--description {
+    display: inline-block !important; }
+  .leonardocompany .footer .footer-row--legal-and-social--social {
+    display: none !important; }
+  .leonardocompany .footer .footer-row--legal-and-social--policy {
+    display: none !important; }
+  .leonardocompany .hero .hero-slide,
+  .leonardocompany .service-offerings-card,
+  .leonardocompany .social-hub--main-post--instagram--card,
+  .leonardocompany .section-hero-card--graphic,
+  .leonardocompany .section-contacts--content--graphic,
+  .leonardocompany .events-cards--card--graphic,
+  .leonardocompany .press-release-card--graphic,
+  .leonardocompany .section-links--graphic,
+  .leonardocompany .topics-card--graphic,
+  .leonardocompany .products-and-services-features--content--graphic,
+  .leonardocompany .global-presence-cards .global-presence-card--graphic,
+  .leonardocompany .about-us-management--slides .swiper-container .swiper-slide,
+  .leonardocompany .news-and-stories-latest-stories--slides .swiper-container .swiper-slide,
+  .leonardocompany .about-us-our-history,
+  .leonardocompany .news-stories-card--wrap {
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+    background-size: cover !important; }
+  .leonardocompany .multimedia--item-list {
+    height: auto !important; }
+  .leonardocompany .multimedia--card {
+    position: relative !important;
+    left: auto !important;
+    top: auto !important; }
+  .leonardocompany .product-card--graphic {
+    mix-blend-mode: normal !important; }
+  .leonardocompany .all-products--product-list .product-card {
+    filter: blur(0) !important;
+    -webkit-filter: blur(0px) !important;
+    -moz-filter: blur(0px) !important;
+    -o-filter: blur(0px) !important;
+    -ms-filter: blur(0px) !important; }
+  .leonardocompany .search-results--content--group {
+    max-height: none !important;
+    overflow: auto !important; }
+  .leonardocompany .hero .swiper-wrapper {
+    transform: none !important; } }
